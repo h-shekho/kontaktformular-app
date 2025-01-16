@@ -1,34 +1,80 @@
-<div id="lightning"></div>
-<script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
-<script>
-  function handleNavigation() {
-    const params = new URLSearchParams(window.location.search);
-    const componentName = params.get('component') || 'kontaktFormularStartseite';
-    const language = params.get('language') || 'en';
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Kontaktformular</title>
+    <style>
+        /* Grundlegende Styling-Regeln */
+        #lightning {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        /* SLDS Styles einbinden */
+        @import 'https://beyerdynamic--devverve.sandbox.my.site.com/faq/slds/styles/salesforce-lightning-design-system.min.css';
+    </style>
+</head>
+<body>
+    <div id="lightning"></div>
+    <script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
+    <script>
+        let currentComponent = 'kontaktFormularStartseite';
 
-    const lightning = document.getElementById('lightning');
-    lightning.innerHTML = '';
+        function createComponent(componentName, params = {}) {
+            const lightning = document.getElementById('lightning');
+            lightning.innerHTML = '';
 
-    $Lightning.use(
-      "c:ReklamationsformularOut",
-      function() {
-        $Lightning.createComponent(
-          "c:" + componentName,
-          { selectedLanguage: language },
-          "lightning",
-          function(cmp) {
-            console.log("LWC component was created: " + componentName);
-          }
-        );
-      },
-      "https://beyerdynamic--devverve.sandbox.my.site.com/faq/"
-    );
-  }
+            // Standardwerte für Parameter
+            const defaultParams = {
+                selectedLanguage: 'de',
+                class: 'slds-p-around_medium' // SLDS Padding hinzufügen
+            };
 
-  // Initial navigation
-  handleNavigation();
+            // Parameter zusammenführen
+            const finalParams = { ...defaultParams, ...params };
 
-  // Handle URL changes
-  window.addEventListener('urlChanged', handleNavigation);
-  window.addEventListener('popstate', handleNavigation);
-</script>
+            $Lightning.use(
+                "c:ReklamationsformularOut",
+                function() {
+                    $Lightning.createComponent(
+                        "c:" + componentName,
+                        finalParams,
+                        "lightning",
+                        function(cmp) {
+                            console.log("Component created:", componentName);
+                            currentComponent = componentName;
+                        }
+                    );
+                },
+                "https://beyerdynamic--devverve.sandbox.my.site.com/faq/"
+            );
+        }
+
+        // URL-Parameter verarbeiten
+        function handleNavigation() {
+            const params = new URLSearchParams(window.location.search);
+            const componentName = params.get('component') || 'kontaktFormularStartseite';
+            const language = params.get('language') || 'de';
+
+            createComponent(componentName, { selectedLanguage: language });
+        }
+
+        // Initiale Navigation
+        handleNavigation();
+
+        // URL-Änderungen überwachen
+        window.addEventListener('urlChanged', handleNavigation);
+        window.addEventListener('popstate', handleNavigation);
+
+        // Globalen Event-Listener für Navigation hinzufügen
+        window.addEventListener('navigate', function(event) {
+            const { component, language } = event.detail;
+            const url = new URL(window.location.href);
+            url.searchParams.set('component', component);
+            url.searchParams.set('language', language);
+            window.history.pushState({}, '', url);
+            createComponent(component, { selectedLanguage: language });
+        });
+    </script>
+</body>
+</html>
