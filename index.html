@@ -1,49 +1,34 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Kontaktformular</title>
-</head>
-<body>
-    <div id="lightning"></div>
-    <script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
-    <script>
-        let appComponent;
-        
-        $Lightning.use("c:ReklamationsformularOut", function() {
-            createComponent('kontaktFormularStartseite', { selectedLanguage: 'de' });
-        }, "https://beyerdynamic--devverve.sandbox.my.site.com/faq/");
+<div id="lightning"></div>
+<script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
+<script>
+  function handleNavigation() {
+    const params = new URLSearchParams(window.location.search);
+    const componentName = params.get('component') || 'kontaktFormularStartseite';
+    const language = params.get('language') || 'en';
 
-        function createComponent(componentName, attributes) {
-            // Bestehende Komponente zerstören
-            if (appComponent) {
-                appComponent.destroy();
-            }
-            
-            // Container leeren
-            document.getElementById('lightning').innerHTML = '';
-            
-            // Neue Komponente erstellen
-            $Lightning.createComponent(
-                "c:" + componentName,
-                attributes || {},
-                "lightning",
-                function(cmp, status, error) {
-                    if (status === "SUCCESS") {
-                        appComponent = cmp;
-                        console.log('Component created:', componentName);
-                    } else {
-                        console.error('Error creating component:', error);
-                    }
-                }
-            );
-        }
+    const lightning = document.getElementById('lightning');
+    lightning.innerHTML = '';
 
-        // Globaler Event-Listener für Navigation
-        window.addEventListener('componentNavigation', function(event) {
-            const { componentName, attributes } = event.detail;
-            createComponent(componentName, attributes);
-        }, false);
-    </script>
-</body>
-</html>
+    $Lightning.use(
+      "c:ReklamationsformularOut",
+      function() {
+        $Lightning.createComponent(
+          "c:" + componentName,
+          { selectedLanguage: language },
+          "lightning",
+          function(cmp) {
+            console.log("LWC component was created: " + componentName);
+          }
+        );
+      },
+      "https://beyerdynamic--devverve.sandbox.my.site.com/faq/"
+    );
+  }
+
+  // Initial navigation
+  handleNavigation();
+
+  // Handle URL changes
+  window.addEventListener('urlChanged', handleNavigation);
+  window.addEventListener('popstate', handleNavigation);
+</script>
