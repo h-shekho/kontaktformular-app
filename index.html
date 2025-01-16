@@ -8,66 +8,56 @@
     <div id="lightning"></div>
     <script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
     <script>
-        // Globale Variablen
-        let lightningApp = null;
-        let currentComponent = null;
-
-        // Lightning Out initialisieren
-        $Lightning.use("c:ReklamationsformularOut", 
+        // Lightning Out App initialisieren
+        $Lightning.use(
+            "c:ReklamationsformularOut",
             function() {
-                lightningApp = this;
-                loadInitialComponent();
+                // Initiale Komponente laden
+                loadComponent();
             },
             "https://beyerdynamic--devverve.sandbox.my.site.com/faq/"
         );
 
-        // Initiale Komponente laden
-        function loadInitialComponent() {
+        function loadComponent() {
             const urlParams = new URLSearchParams(window.location.search);
-            const component = urlParams.get('component') || 'kontaktFormularStartseite';
+            const componentName = urlParams.get('component') || 'kontaktFormularStartseite';
             const language = urlParams.get('language') || 'de';
-            
-            loadComponent(component, { selectedLanguage: language });
-        }
 
-        // Komponente laden
-        function loadComponent(componentName, attributes) {
-            if (currentComponent) {
-                currentComponent.destroy();
-            }
+            // Container leeren
+            document.getElementById('lightning').innerHTML = '';
 
+            // Komponente erstellen
             $Lightning.createComponent(
                 "c:" + componentName,
-                attributes,
+                {
+                    selectedLanguage: language
+                },
                 "lightning",
                 function(cmp, status, errorMessage) {
-                    if (status === "SUCCESS") {
-                        currentComponent = cmp;
-                        console.log('Component loaded successfully:', componentName);
-                    } else if (status === "ERROR") {
-                        console.error('Error creating component:', errorMessage);
+                    if (status === "ERROR") {
+                        console.error('Fehler beim Laden der Komponente:', errorMessage);
                     }
                 }
             );
         }
 
-        // Navigation Event Handler
-        window.addEventListener('navigate', function(event) {
+        // Event Listener für Navigation
+        document.addEventListener('lwc:navigate', function(event) {
             const component = event.detail.component;
             const language = event.detail.language;
-            
-            // URL aktualisieren
+
+            // URL aktualisieren ohne Reload
             const url = new URL(window.location.href);
             url.searchParams.set('component', component);
             url.searchParams.set('language', language);
             window.history.pushState({}, '', url);
-            
+
             // Neue Komponente laden
-            loadComponent(component, { selectedLanguage: language });
+            loadComponent();
         });
 
-        // Browser Navigation Handler
-        window.addEventListener('popstate', loadInitialComponent);
+        // Browser Back/Forward Handler
+        window.onpopstate = loadComponent;
     </script>
 </body>
 </html>
