@@ -1,65 +1,35 @@
-
 <div id="lightning"></div>
 <script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
 <script>
-    // Globale Variable für die aktuelle App-Instanz
-    let lightningApp;
+  let currentComponent = 'kontaktFormularStartseite';
+  
+  function createComponent(componentName, params) {
+    $Lightning.use(
+      "c:ReklamationsformularOut",
+      function() {
+        $Lightning.createComponent(
+          "c:" + componentName,
+          params,
+          "lightning",
+          function(cmp) {
+            console.log("LWC component was created: " + componentName);
+            currentComponent = componentName;
+          }
+        );
+      },
+      "https://beyerdynamic--devverve.sandbox.my.site.com/faq/"
+    );
+  }
 
-    function initializeLightningOut() {
-        return new Promise((resolve) => {
-            $Lightning.use("c:ReklamationsformularOut", function() {
-                lightningApp = this;
-                resolve();
-            },
-            "https://beyerdynamic--devverve.sandbox.my.site.com/faq/"
-            );
-        });
-    }
+  // Initial component creation
+  createComponent('kontaktFormularStartseite', { selectedLanguage: 'en' });
 
-    async function createComponent(componentName, params = {}) {
-        if (!lightningApp) {
-            await initializeLightningOut();
-        }
-
-        return new Promise((resolve) => {
-            $Lightning.createComponent(
-                "c:" + componentName,
-                params,
-                "lightning",
-                function(cmp) {
-                    console.log("Component created:", componentName);
-                    resolve(cmp);
-                }
-            );
-        });
-    }
-
-    async function handleNavigation() {
-        const params = new URLSearchParams(window.location.search);
-        const componentName = params.get('component') || 'kontaktFormularStartseite';
-        const language = params.get('language') || 'de';
-
-        // Container leeren
-        const lightning = document.getElementById('lightning');
-        lightning.innerHTML = '';
-
-        // Neue Komponente erstellen
-        await createComponent(componentName, { selectedLanguage: language });
-    }
-
-    // Initiale Navigation
-    handleNavigation();
-
-    // Navigation Event Listener
-    window.addEventListener('navigate', async function(event) {
-        const { component, language } = event.detail;
-        const url = new URL(window.location.href);
-        url.searchParams.set('component', component);
-        url.searchParams.set('language', language);
-        window.history.pushState({}, '', url);
-        await handleNavigation();
+  // Handle navigation events
+  document.addEventListener('navigate', function(event) {
+    const lightning = document.getElementById('lightning');
+    lightning.innerHTML = ''; // Clear current component
+    createComponent(event.detail.component, { 
+      selectedLanguage: event.detail.language 
     });
-
-    // Browser Back/Forward Navigation
-    window.addEventListener('popstate', handleNavigation);
+  });
 </script>
