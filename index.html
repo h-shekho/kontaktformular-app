@@ -1,35 +1,73 @@
-<div id="lightning"></div>
-<script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
-<script>
-  let currentComponent = 'kontaktFormularStartseite';
-  
-  function createComponent(componentName, params) {
-    $Lightning.use(
-      "c:ReklamationsformularOut",
-      function() {
-        $Lightning.createComponent(
-          "c:" + componentName,
-          params,
-          "lightning",
-          function(cmp) {
-            console.log("LWC component was created: " + componentName);
-            currentComponent = componentName;
-          }
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Kontaktformular</title>
+</head>
+<body>
+    <div id="lightning"></div>
+    <script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
+    <script>
+        // Globale Variablen
+        let lightningApp = null;
+        let currentComponent = null;
+
+        // Lightning Out initialisieren
+        $Lightning.use("c:ReklamationsformularOut", 
+            function() {
+                lightningApp = this;
+                loadInitialComponent();
+            },
+            "https://beyerdynamic--devverve.sandbox.my.site.com/faq/"
         );
-      },
-      "https://beyerdynamic--devverve.sandbox.my.site.com/faq/"
-    );
-  }
 
-  // Initial component creation
-  createComponent('kontaktFormularStartseite', { selectedLanguage: 'en' });
+        // Initiale Komponente laden
+        function loadInitialComponent() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const component = urlParams.get('component') || 'kontaktFormularStartseite';
+            const language = urlParams.get('language') || 'de';
+            
+            loadComponent(component, { selectedLanguage: language });
+        }
 
-  // Handle navigation events
-  document.addEventListener('navigate', function(event) {
-    const lightning = document.getElementById('lightning');
-    lightning.innerHTML = ''; // Clear current component
-    createComponent(event.detail.component, { 
-      selectedLanguage: event.detail.language 
-    });
-  });
-</script>
+        // Komponente laden
+        function loadComponent(componentName, attributes) {
+            if (currentComponent) {
+                currentComponent.destroy();
+            }
+
+            $Lightning.createComponent(
+                "c:" + componentName,
+                attributes,
+                "lightning",
+                function(cmp, status, errorMessage) {
+                    if (status === "SUCCESS") {
+                        currentComponent = cmp;
+                        console.log('Component loaded successfully:', componentName);
+                    } else if (status === "ERROR") {
+                        console.error('Error creating component:', errorMessage);
+                    }
+                }
+            );
+        }
+
+        // Navigation Event Handler
+        window.addEventListener('navigate', function(event) {
+            const component = event.detail.component;
+            const language = event.detail.language;
+            
+            // URL aktualisieren
+            const url = new URL(window.location.href);
+            url.searchParams.set('component', component);
+            url.searchParams.set('language', language);
+            window.history.pushState({}, '', url);
+            
+            // Neue Komponente laden
+            loadComponent(component, { selectedLanguage: language });
+        });
+
+        // Browser Navigation Handler
+        window.addEventListener('popstate', loadInitialComponent);
+    </script>
+</body>
+</html>
