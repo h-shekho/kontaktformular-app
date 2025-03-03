@@ -1,34 +1,22 @@
 <div id="lightning"></div>
 <script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
 <script>
-  function handleNavigation() {
-    const params = new URLSearchParams(window.location.search);
-    const componentName = params.get('component') || 'kontaktFormularStartseite';
-    const language = params.get('language') || 'en';
-
-    const lightning = document.getElementById('lightning');
-    lightning.innerHTML = '';
-
-    $Lightning.use(
-      "c:ReklamationsformularOut",
-      function() {
+  $Lightning.use(
+    "c:ReklamationsformularOut", // name of the Lightning app
+    function () {
+      // Callback once framework and app loaded
         $Lightning.createComponent(
-          "c:" + componentName,
-          { selectedLanguage: language },
-          "lightning",
-          function(cmp) {
-            console.log("LWC component was created: " + componentName);
-          }
+          "c:kontaktFormularStartseite", // top-level component of your app
+          {
+            "selectedLanguage" : "en"
+          }, // attributes to set on the component when created
+          "lightning", // the DOM location to insert the component
+          function (cmp) {
+            // callback when component is created and active on the page
+            console.log("LWC component was created");
+          },
         );
-      },
-      "https://beyerdynamic--devverve.sandbox.my.site.com/faq/"
-    );
-  }
-
-  // Initial navigation
-  handleNavigation();
-
-  // Handle URL changes
-  window.addEventListener('urlChanged', handleNavigation);
-  window.addEventListener('popstate', handleNavigation);
+    },
+    "https://beyerdynamic--devverve.sandbox.my.site.com/faq/", // Site endpoint
+  );
 </script>
