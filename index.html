@@ -1,19 +1,33 @@
 <!DOCTYPE html>
 <html lang="de">
-  <head>
-    <meta charset="UTF-8" />
-    <title>LO 2.0 Minimal Test</title>
-  </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning Out 2.0 Authenticated Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .form-container { border: 1px solid #ccc; padding: 20px; margin-top: 20px; min-height: 200px; }
+    </style>
+</head>
+<body>
 
-  <body>
-    <lightning-out-application
-      app-id="1UsbY00000001LtSAI"
-      components="c-test-lightning-out">
-    </lightning-out-application>
+    <h1>Unsere Webseite (Eingeloggter Testlauf)</h1>
+    <p>Wenn die Session-ID gültig ist, rendert das LWC-Formular jetzt hier unten:</p>
 
-    <script
-      type="text/javascript"
-      src="https://beyerdynamic--devverve.sandbox.my.salesforce.com/lightning/lightning.out.latest/index.iife.prod.js">
+    <div class="form-container">
+        <lightning-out-application 
+            frontdoor-url="https://beyerdynamic--devverve.sandbox.my.site.com/forms/secur/frontdoor.jsp?sid=SESSION_ID_REMOVED"
+            app-id="1UsbY00000001LtSAI" 
+            components="c-test-lightning-out">
+        </lightning-out-application>
+        
+        <c-test-lightning-out></c-test-lightning-out>
+    </div>
+
+    <script 
+        type="text/javascript" 
+        src="https://beyerdynamic--devverve.sandbox.my.site.com/forms/lightning/lightning.out.latest/index.iife.prod.js">
     </script>
-  </body>
+
+</body>
 </html>
