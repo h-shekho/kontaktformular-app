@@ -1,22 +1,19 @@
-<div id="lightning"></div>
-<script src="https://beyerdynamic--devverve.sandbox.my.site.com/faq/lightning/lightning.out.js"></script>
-<script>
-  $Lightning.use(
-    "c:ReklamationsformularOut", // name of the Lightning app
-    function () {
-      // Callback once framework and app loaded
-        $Lightning.createComponent(
-            "c:kontaktFormularStartseite", // top-level component of your app
-          {
-            "selectedLanguage" : "en",
-          }, // attributes to set on the component when created
-          "lightning", // the DOM location to insert the component
-          function (cmp) {
-            // callback when component is created and active on the page
-            console.log("LWC component was created");
-          },
-        );
-    },
-    "https://beyerdynamic--devverve.sandbox.my.site.com/faq", // Site endpoint
-  );
-</script>
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>LO 2.0 Minimal</title>
+  </head>
+
+  <body>
+    <lightning-out-application
+      app-id="1UsbY00000001LtSAI"
+      components="c-kontakt-formular-startseite">
+    </lightning-out-application>
+
+    <script
+      type="text/javascript"
+      src="https://beyerdynamic--devverve.sandbox.my.salesforce.com/lightning/lightning.out.latest/index.iife.prod.js">
+    </script>
+  </body>
+</html>
