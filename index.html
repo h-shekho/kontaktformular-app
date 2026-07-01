@@ -3,18 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lightning Out 2.0 Authenticated Test</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .form-container { border: 1px solid #ccc; padding: 20px; margin-top: 20px; min-height: 200px; }
-    </style>
+    <title>Lightning Out 2.0 Test</title>
 </head>
 <body>
+    <p> das LWC soll hier unten rendern:</p>
 
-    <h1>Unsere Webseite (Eingeloggter Testlauf)</h1>
-    <p>Wenn die Session-ID gültig ist, rendert das LWC-Formular jetzt hier unten:</p>
-
-    <div class="form-container">
+    <div>
         <lightning-out-application frontdoor-url="https://beyerdynamic--devverve.sandbox.my.salesforce.com/secur/frontdoor.jsp?sid=00DbY00000HtHKz!AQEAQNUOpW96eUx68dfrfnwyqguOP7OCD55OdHBjzgSgs3syyad8pXGKX1UYig97u6.pNiA_8g5vLDWyrsCQp0Qt_GPoaiOQ" app-id="1UsbY00000001LtSAI" components="c-test-lightning-out"></lightning-out-application>
         
         <c-test-lightning-out></c-test-lightning-out>
